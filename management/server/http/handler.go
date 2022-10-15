@@ -1,11 +1,12 @@
 package http
 
 import (
+	"net/http"
+
 	"github.com/gorilla/mux"
 	s "github.com/netbirdio/netbird/management/server"
 	"github.com/netbirdio/netbird/management/server/http/middleware"
 	"github.com/rs/cors"
-	"net/http"
 )
 
 // APIHandler creates the Management service HTTP API handler registering all the available endpoints.

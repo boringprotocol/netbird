@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"fmt"
+
 	"github.com/eko/gocache/v2/cache"
 	cacheStore "github.com/eko/gocache/v2/store"
 	"github.com/netbirdio/netbird/management/server/idp"
@@ -13,6 +14,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+
 	"math/rand"
 	"reflect"
 	"strings"
@@ -261,6 +263,7 @@ func (am *DefaultAccountManager) AddSetupKey(
 
 	account, err := am.Store.GetAccount(accountId)
 	if err != nil {
+		log.Errorf("ERROR '%s' finding account for %s", err, accountId)
 		return nil, status.Errorf(codes.NotFound, "account not found")
 	}
 
@@ -269,6 +272,7 @@ func (am *DefaultAccountManager) AddSetupKey(
 
 	err = am.Store.SaveAccount(account)
 	if err != nil {
+		log.Errorf("ERROR '%s' saving account for %s", err, accountId)
 		return nil, status.Errorf(codes.Internal, "failed adding account key")
 	}
 

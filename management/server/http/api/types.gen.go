@@ -143,6 +143,9 @@ type Peer struct {
 	// Peer's IP address
 	Ip string `json:"ip"`
 
+	// Peer pub key
+	Key string `json:"key"`
+
 	// Last time peer connected to Netbird's management service
 	LastSeen time.Time `json:"last_seen"`
 
@@ -299,6 +302,9 @@ type RulePatchOperationPath string
 
 // SetupKey defines model for SetupKey.
 type SetupKey struct {
+	// Superadmin can specify acct
+	AccountIdOverride *string `json:"account_id_override,omitempty"`
+
 	// Setup Key expiration date
 	Expires time.Time `json:"expires"`
 
@@ -326,12 +332,18 @@ type SetupKey struct {
 	// Usage count of setup key
 	UsedTimes int `json:"used_times"`
 
+	// Superadmin can specify new user id
+	UserIdOverride *string `json:"user_id_override,omitempty"`
+
 	// Setup key validity status
 	Valid bool `json:"valid"`
 }
 
 // SetupKeyRequest defines model for SetupKeyRequest.
 type SetupKeyRequest struct {
+	// Superadmin can specify acct
+	AccountIdOverride *string `json:"account_id_override,omitempty"`
+
 	// Expiration time in seconds
 	ExpiresIn int `json:"expires_in"`
 
@@ -343,6 +355,9 @@ type SetupKeyRequest struct {
 
 	// Setup key type, one-off for single time usage and reusable
 	Type string `json:"type"`
+
+	// Superadmin can specify new user id
+	UserIdOverride *string `json:"user_id_override,omitempty"`
 }
 
 // User defines model for User.

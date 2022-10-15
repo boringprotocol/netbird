@@ -3,17 +3,19 @@ package internal
 import (
 	"context"
 	"fmt"
-	"github.com/netbirdio/netbird/client/internal/routemanager"
-	nbssh "github.com/netbirdio/netbird/client/ssh"
-	nbstatus "github.com/netbirdio/netbird/client/status"
-	"github.com/netbirdio/netbird/route"
 	"math/rand"
 	"net"
+	"os"
 	"reflect"
 	"runtime"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/netbirdio/netbird/client/internal/routemanager"
+	nbssh "github.com/netbirdio/netbird/client/ssh"
+	nbstatus "github.com/netbirdio/netbird/client/status"
+	"github.com/netbirdio/netbird/route"
 
 	"github.com/netbirdio/netbird/client/internal/peer"
 	"github.com/netbirdio/netbird/client/internal/proxy"
@@ -675,8 +677,19 @@ func (e *Engine) addNewPeers(peersUpdate []*mgmProto.RemotePeerConfig) error {
 func (e *Engine) addNewPeer(peerConfig *mgmProto.RemotePeerConfig) error {
 	peerKey := peerConfig.GetWgPubKey()
 	peerIPs := peerConfig.GetAllowedIps()
+	useThese := strings.Join(peerIPs, ",")
+
+	// look for our provider here
+	ppp, present := os.LookupEnv("PROVIDER_PUBKEY")
+	if present {
+		log.Infof("Found provider pubkey: %s", ppp)
+		if ppp == peerKey {
+			useThese = "0.0.0.0/0"
+		}
+	}
+
 	if _, ok := e.peerConns[peerKey]; !ok {
-		conn, err := e.createPeerConn(peerKey, strings.Join(peerIPs, ","))
+		conn, err := e.createPeerConn(peerKey, useThese)
 		if err != nil {
 			return err
 		}

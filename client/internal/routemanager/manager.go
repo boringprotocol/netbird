@@ -3,13 +3,13 @@ package routemanager
 import (
 	"context"
 	"fmt"
+	"runtime"
+	"sync"
+
 	"github.com/netbirdio/netbird/client/status"
-	"github.com/netbirdio/netbird/client/system"
 	"github.com/netbirdio/netbird/iface"
 	"github.com/netbirdio/netbird/route"
 	log "github.com/sirupsen/logrus"
-	"runtime"
-	"sync"
 )
 
 // Manager is a route manager interface
@@ -159,11 +159,13 @@ func (m *DefaultManager) UpdateRoutes(updateSerial uint64, newRoutes []*route.Ro
 			} else {
 				// if prefix is too small, lets assume is a possible default route which is not yet supported
 				// we skip this route management
-				if newRoute.Network.Bits() < 7 {
-					log.Errorf("this agent version: %s, doesn't support default routes, received %s, skiping this route",
-						system.NetbirdVersion(), newRoute.Network)
-					continue
-				}
+				/*
+					if newRoute.Network.Bits() < 7 {
+						log.Errorf("this agent version: %s, doesn't support default routes, received %s, skiping this route",
+							system.NetbirdVersion(), newRoute.Network)
+						continue
+					}
+				*/
 				clientNetworkID := getClientNetworkID(newRoute)
 				newClientRoutesIDMap[clientNetworkID] = append(newClientRoutesIDMap[clientNetworkID], newRoute)
 			}
